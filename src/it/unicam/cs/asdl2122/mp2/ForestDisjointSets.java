@@ -1,5 +1,7 @@
 package it.unicam.cs.asdl2122.mp2;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +18,7 @@ import java.util.Set;
  *
  * @param <E> il tipo degli elementi degli insiemi disgiunti
  */
+@SuppressWarnings("ConstantConditions")
 public class ForestDisjointSets<E> implements DisjointSets<E> {
 
     /*
@@ -59,7 +62,6 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
             this.parent = this;
             this.rank = 0;
         }
-
     }
 
     /**
@@ -67,13 +69,15 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
      * alberi.
      */
     public ForestDisjointSets() {
-        // TODO implementare
+        currentElements = new HashMap<>();
     }
 
     @Override
     public boolean isPresent(E e) {
-        // TODO implementare
-        return false;
+        if (e == null)
+            throw new NullPointerException();
+
+        return currentElements.containsKey(e);
     }
 
     /*
@@ -82,7 +86,11 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
      */
     @Override
     public void makeSet(E e) {
-        // TODO implementare
+        if (e == null)
+            throw new NullPointerException();
+
+        if (currentElements.putIfAbsent(e, new Node<>(e)) != null)
+            throw new IllegalArgumentException();
     }
 
     /*
@@ -92,8 +100,17 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
      */
     @Override
     public E findSet(E e) {
-        // TODO implementare
-        return null;
+        if (e == null)
+            throw new NullPointerException();
+
+        Node<E> node = currentElements.get(e);
+        if (node == null)
+            return null;
+
+        if (!e.equals(node.parent.item)) {
+            node.parent = currentElements.get(findSet(node.parent.item));
+        }
+        return node.parent.item;
     }
 
     /*
@@ -108,23 +125,60 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
      */
     @Override
     public void union(E e1, E e2) {
-        // TODO implementare
+        if (e1 == null || e2 == null)
+            throw new NullPointerException();
+
+        E e1Rep = findSet(e1);
+        E e2Rep = findSet(e2);
+        if (e1Rep == null || e2Rep == null)
+            throw new IllegalArgumentException();
+
+        link(e1Rep, e2Rep);
     }
 
     @Override
     public Set<E> getCurrentRepresentatives() {
-        // TODO implementare
-        return null;
+        Set<E> representatives = new HashSet<>();
+        for (Node<E> node : currentElements.values()) {
+            if (node.parent == node)
+                representatives.add(node.item);
+        }
+        return representatives;
     }
 
     @Override
     public Set<E> getCurrentElementsOfSetContaining(E e) {
         // TODO implementare
-        return null;
+        if (e == null)
+            throw new NullPointerException();
+
+        E eRep = findSet(e);
+        if (eRep == null)
+            throw new IllegalArgumentException();
+
+        Set<E> elements = new HashSet<>();
+        for (Node<E> node : currentElements.values()) {
+            if (eRep.equals(findSet(node.item)))
+                elements.add(node.item);
+        }
+        return elements;
     }
 
     @Override
     public void clear() {
-        // TODO implementare
+        currentElements.clear();
+    }
+
+    private void link(E rep1, E rep2) {
+        Node<E> node1 = currentElements.get(rep1);
+        Node<E> node2 = currentElements.get(rep2);
+
+        if (node1.rank > node2.rank) {
+            node2.parent = node1;
+        } else {
+            node1.parent = node2;
+            if (node1.rank == node2.rank)
+                node2.rank++;
+        }
     }
 }

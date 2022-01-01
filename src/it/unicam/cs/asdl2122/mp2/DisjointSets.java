@@ -71,12 +71,11 @@ public interface DisjointSets<E> {
      * @throws NullPointerException se almeno uno dei due elementi passati è null
      * @throws IllegalArgumentException se almeno uno dei due elementi
      * passati non è presente in nessuno degli insiemi disgiunti correnti
-     * 
      */
     void union(E e1, E e2);
 
     /**
-     * Restituisce l'insieme dei rappresentantanti degli insiemi disgiunti
+     * Restituisce l'insieme dei rappresentanti degli insiemi disgiunti
      * attualmente presenti.
      * 
      * @return l'insieme corrente dei rappresentanti degli insiemi disgiunti
@@ -91,7 +90,7 @@ public interface DisjointSets<E> {
      *          cui fa parte
      * @return l'insieme di elementi di cui fa parte l'elemento passato
      *
-     * @throws NullPointerException se l'insieme passato è null
+     * @throws NullPointerException se l'elemento passato è null
      * @throws IllegalArgumentException se l'elemento passato non è
      * contenuto in nessun insieme disgiunto
      */
