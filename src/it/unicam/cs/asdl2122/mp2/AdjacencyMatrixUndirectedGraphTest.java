@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
  * 
  * @author Luca Tesei
  */
+@SuppressWarnings("ALL")
 class AdjacencyMatrixUndirectedGraphTest {
 
     @Test
@@ -324,12 +325,12 @@ class AdjacencyMatrixUndirectedGraphTest {
     final void testRemoveEdge() {
         Graph<String> g = new AdjacencyMatrixUndirectedGraph<String>();
         assertThrows(NullPointerException.class,
-                () -> g.removeEdge((GraphEdge<String>) null));
+                () -> g.removeEdge(null));
         GraphNode<String> ns = new GraphNode<String>("s");
         assertThrows(NullPointerException.class,
-                () -> g.removeEdge((GraphNode<String>) null, ns));
+                () -> g.removeEdge(null, ns));
         assertThrows(NullPointerException.class,
-                () -> g.removeEdge(ns, (GraphNode<String>) null));
+                () -> g.removeEdge(ns, null));
         g.addNode(ns);
         g.addNode("a");
         g.addEdge("s", "a");
@@ -362,11 +363,11 @@ class AdjacencyMatrixUndirectedGraphTest {
     final void testGetEdge() {
         Graph<String> g = new AdjacencyMatrixUndirectedGraph<String>();
         assertThrows(NullPointerException.class,
-                () -> g.getEdge((GraphEdge<String>) null));
+                () -> g.getEdge(null));
         assertThrows(NullPointerException.class,
-                () -> g.getEdge((String) null, (String) null));
+                () -> g.getEdge(null, (String) null));
         assertThrows(NullPointerException.class, () -> g
-                .getEdge((GraphNode<String>) null, (GraphNode<String>) null));
+                .getEdge(null, (GraphNode<String>) null));
         assertThrows(IndexOutOfBoundsException.class, () -> g.getEdge(0, 0));
         GraphNode<String> ns = new GraphNode<String>("s");
         g.addNode(ns);
