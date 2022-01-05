@@ -24,17 +24,17 @@ public class GraphNode<L> {
     /**
      * Colore bianco associato al nodo.
      */
-    public static int COLOR_WHITE = 0;
+    public static final int COLOR_WHITE = 0;
 
     /**
      * Colore grigio associato al nodo.
      */
-    public static int COLOR_GREY = 1;
+    public static final int COLOR_GREY = 1;
 
     /**
      * Colore nero associato al nodo.
      */
-    public static int COLOR_BLACK = 2;
+    public static final int COLOR_BLACK = 2;
 
     private final L label;
     private int color;
@@ -57,6 +57,7 @@ public class GraphNode<L> {
     public GraphNode(L label) {
         if (label == null)
             throw new NullPointerException("Etichetta nel nodo nulla");
+
         this.label = label;
     }
 
@@ -210,6 +211,7 @@ public class GraphNode<L> {
             return false;
         if (!(obj instanceof GraphNode))
             return false;
+
         GraphNode<?> other = (GraphNode<?>) obj;
         return this.label.equals(other.label);
     }
@@ -218,5 +220,4 @@ public class GraphNode<L> {
     public String toString() {
         return "Nodo[ " + label + " ]";
     }
-
 }

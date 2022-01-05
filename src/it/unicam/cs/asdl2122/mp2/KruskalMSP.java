@@ -52,14 +52,15 @@ public class KruskalMSP<L> {
      */
     public Set<GraphEdge<L>> computeMSP(Graph<L> g) {
         if (g == null)
-            throw new NullPointerException();
+            throw new NullPointerException("Impossibile eseguire l'algoritmo con un parametro nullo");
         if (g.isDirected())
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Impossibile eseguire l'algoritmo su un grafo orientato");
 
         Set<GraphEdge<L>> edges = g.getEdges();
         for (GraphEdge<L> edge : edges) {
             if (!edge.hasWeight() || edge.getWeight() < 0)
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(
+                        "Impossibile eseguire l'algoritmo su un grafo con pesi negativi o non esistenti");
         }
 
         Set<GraphEdge<L>> result = new HashSet<>();
@@ -69,7 +70,7 @@ public class KruskalMSP<L> {
             disjointSets.makeSet(node);
         }
 
-        List<GraphEdge<L>> edgeList = new ArrayList<>(g.getEdges());
+        List<GraphEdge<L>> edgeList = new ArrayList<>(edges);
         sortEdges(edgeList, 0, edgeList.size() - 1);
 
         for (GraphEdge<L> edge : edgeList) {
@@ -86,10 +87,10 @@ public class KruskalMSP<L> {
 
     private void sortEdges(List<GraphEdge<L>> edges, int low, int high) {
         if (low < high) {
-            int pi = partition(edges, low, high);
+            int partIndex = partition(edges, low, high);
 
-            sortEdges(edges, low, pi - 1);
-            sortEdges(edges, pi + 1, high);
+            sortEdges(edges, low, partIndex - 1);
+            sortEdges(edges, partIndex + 1, high);
         }
     }
 

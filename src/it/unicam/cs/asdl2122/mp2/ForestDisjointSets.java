@@ -148,7 +148,6 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
 
     @Override
     public Set<E> getCurrentElementsOfSetContaining(E e) {
-        // TODO implementare
         if (e == null)
             throw new NullPointerException();
 

@@ -169,6 +169,7 @@ public class GraphEdge<L> {
             return false;
         if (!(obj instanceof GraphEdge))
             return false;
+
         GraphEdge<?> other = (GraphEdge<?>) obj;
         if (directed != other.directed)
             return false;
@@ -179,9 +180,9 @@ public class GraphEdge<L> {
             return node2.equals(other.node2);
         } else { // caso speciale per grafi non orientati
             // ci deve essere una uguaglianza diretta o incrociata
+            // Altrimenti non sono uguali
             if (node1.equals(other.node1) && node2.equals(other.node2))
                 return true;
-            // Altrimenti non sono uguali
             return node1.equals(other.node2) && node2.equals(other.node1);
         }
     }

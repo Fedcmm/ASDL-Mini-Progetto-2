@@ -115,6 +115,7 @@ public abstract class Graph<L> {
      * Questa operazione è opzionale.
      * 
      * @param label l'etichetta del nodo da rimuovere
+     *
      * @throws IllegalArgumentException se l'etichetta data non esiste
      * in nessun nodo di questo grafo
      * @throws NullPointerException se l'etichetta passata è null
@@ -130,6 +131,7 @@ public abstract class Graph<L> {
      * Questa operazione è opzionale.
      * 
      * @param i l'indice del nodo da rimuovere
+     *
      * @throws IndexOutOfBoundsException se l'indice passato non
      * corrisponde a nessun nodo o è fuori dai limiti dell'intervallo
      * <code>[0, this.nodeCount() - 1]</code>
@@ -263,7 +265,6 @@ public abstract class Graph<L> {
      * @throws NullPointerException se almeno uno dei due nodi passati è nullo
      * @throws IllegalArgumentException se almeno uno dei due nodi passati
      * non esiste nel grafo
-     * 
      */
     public abstract boolean addEdge(GraphNode<L> node1, GraphNode<L> node2);
 
@@ -333,9 +334,9 @@ public abstract class Graph<L> {
      * Questa operazione è opzionale.
      * 
      * @param i l'indice del nodo sorgente del nuovo arco in caso di grafo
-     *          orientato, altrimento l'indice di uno dei nodi del nuovo arco
+     *          orientato, altrimenti l'indice di uno dei nodi del nuovo arco
      * @param j l'indice del nodo destinazione del nuovo arco in caso di
-     *          grafo orientato, altrimento l'indice di uno dei nodi del nuovo arco
+     *          grafo orientato, altrimenti l'indice di uno dei nodi del nuovo arco
      * @return true se l'arco è stato inserito, false se un arco esattamente
      *         uguale già esiste
      *
@@ -453,7 +454,7 @@ public abstract class Graph<L> {
 
     /**
      * Restituisce, se esiste, un arco di questo grafo che è uguale all'arco
-     * dato. Se il grafo è non orientato l'arco restituto potrebbe avere i nodi
+     * dato. Se il grafo è non orientato l'arco restituito potrebbe avere i nodi
      * in ordine diverso da quelli dell'arco dato.
      * 
      * @param edge l'arco di cui ricercare l'arco uguale in questo grafo
@@ -538,7 +539,7 @@ public abstract class Graph<L> {
 
     /**
      * Restituisce l'insieme di tutti i nodi adiacenti a un certo nodo. Se il
-     * grafo è orientato, i nodi restituiti sono solo quelli collegati da un un
+     * grafo è orientato, i nodi restituiti sono solo quelli collegati da un
      * arco uscente dal nodo passato.
      * 
      * @param node il nodo di cui cercare i nodi adiacenti
