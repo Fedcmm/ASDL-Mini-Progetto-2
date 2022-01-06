@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
  * 
  * @author Luca Tesei
  */
+@SuppressWarnings("ALL")
 class PrimMSPTest {
 
     @Test
