@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
  * 
  * @author Luca Tesei
  */
+@SuppressWarnings("ALL")
 class UndirectedGraphConnectedComponentsComputerTest {
 
     @Test
