@@ -50,28 +50,30 @@ public class UndirectedGraphConnectedComponentsComputer<L> {
 
         Set<Set<GraphNode<L>>> result = new HashSet<>();
 
-        // Crea un nuovo insieme singoletto per ogni nodo
+        f.clear();
         for (GraphNode<L> node : g.getNodes()) {
             f.makeSet(node);
         }
+
         for (GraphEdge<L> edge : g.getEdges()) {
             GraphNode<L> node1 = edge.getNode1();
             GraphNode<L> node2 = edge.getNode2();
 
-            // Se i due nodi dell'arco sono in insiemi diversi li unisce
+            // Se i due nodi sono in insiemi diversi li unisce, indicando che sono connessi
             if (!f.findSet(node1).equals(f.findSet(node2))) {
                 f.union(node1, node2);
             }
         }
 
-        // Aggiunge le componenti connesse all'insieme finale (se due nodi appartengono allo stesso
-        // componente viene aggiunto solo una volta)
-        for (GraphNode<L> node : g.getNodes()) {
+        /*
+            Aggiunge le componenti connesse all'insieme finale.
+            Iterare sull'insieme dei rappresentanti riduce al minimo il numero di cicli necessari
+            rispetto all'iterazione sull'insieme di tutti i nodi
+        */
+        for (GraphNode<L> node : f.getCurrentRepresentatives()) {
             result.add(f.getCurrentElementsOfSetContaining(node));
         }
 
-        // Elimina tutti gli insiemi disgiunti per poter riutilizzare l'istanza della classe
-        f.clear();
         return result;
     }
 }

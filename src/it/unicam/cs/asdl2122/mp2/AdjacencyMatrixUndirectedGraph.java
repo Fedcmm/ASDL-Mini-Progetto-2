@@ -71,13 +71,17 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
     @Override
     public int edgeCount() {
         int count = 0;
+
         for (int i = 0; i < matrix.size(); i++) {
             ArrayList<GraphEdge<L>> row = matrix.get(i);
+
+            // Il secondo for parte da i, evitando di contare entrambi gli archi (i, j) e (j, i)
             for (int j = i; j < row.size(); j++) {
                 if (row.get(j) != null)
                     count++;
             }
         }
+
         return count;
     }
 
@@ -100,15 +104,20 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
     public boolean addNode(GraphNode<L> node) {
         nullCheck(node);
 
-        boolean wasAdded = nodesIndex.putIfAbsent(node, nodeCount()) == null;
-        if (wasAdded) {
-            for (ArrayList<GraphEdge<L>> row : matrix)
-                row.add(null); // Aumenta di 1 la dimensione di tutte le righe
+        Integer index = nodesIndex.get(node);
+        if (index != null)
+            return false; // Il nodo è già presente
 
-            // Aggiunge una nuova riga di dimensione nodeCount()
-            matrix.add(new ArrayList<>(Collections.nCopies(nodeCount(), null)));
+        nodesIndex.put(node, nodeCount());
+
+        // Aumenta di 1 la dimensione di tutte le righe
+        for (ArrayList<GraphEdge<L>> row : matrix) {
+            row.add(null);
         }
-        return wasAdded;
+        // Aggiunge una nuova riga di dimensione nodeCount()
+        matrix.add(new ArrayList<>(Collections.nCopies(nodeCount(), null)));
+
+        return true;
     }
 
     /*
@@ -134,15 +143,15 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
             throw new IllegalArgumentException("Il nodo specificato non esiste");
 
         // Rimuove gli archi che collegavano il nodo eliminato
-        // Il metodo remove aggiorna gli indici in automatico
+        // Il metodo remove aggiorna gli indici della matrice in automatico
         matrix.remove(oldIndex.intValue());
         for (ArrayList<GraphEdge<L>> row : matrix) {
             row.remove(oldIndex.intValue());
         }
 
-        // Aggiorna gli indici maggiori di quello del nodo eliminato
         for (Map.Entry<GraphNode<L>, Integer> entry : nodesIndex.entrySet()) {
             Integer index = entry.getValue();
+            // Aggiorna gli indici maggiori di quello del nodo eliminato
             if (index != null && index > oldIndex)
                 entry.setValue(index - 1);
         }
@@ -172,10 +181,9 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
     public GraphNode<L> getNode(GraphNode<L> node) {
         nullCheck(node);
 
-        for (Map.Entry<GraphNode<L>, Integer> entry : nodesIndex.entrySet()) {
-            GraphNode<L> key = entry.getKey();
-            if (node.equals(key))
-                return key;
+        for (GraphNode<L> graphNode : nodesIndex.keySet()) {
+            if (node.equals(graphNode))
+                return graphNode;
         }
         return null;
     }
@@ -216,7 +224,7 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
 
     @Override
     public Set<GraphNode<L>> getNodes() {
-        return nodesIndex.keySet();
+        return new HashSet<>(nodesIndex.keySet());
     }
 
     @Override
@@ -230,7 +238,8 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
         int j = getNodeIndexOf(edge.getNode2());
 
         ArrayList<GraphEdge<L>> row = matrix.get(i);
-        if (row.get(j) != null)
+        // È sufficiente controllare solo una delle posizioni
+        if (row.get(j) != null && edge.equals(row.get(j)))
             return false; // Esiste già un arco con gli stessi nodi di quello passato
 
         // Aggiunge l'arco in posizione (i, j)
@@ -333,8 +342,7 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
         indexCheck(i);
         indexCheck(j);
 
-        ArrayList<GraphEdge<L>> row = matrix.get(i);
-        return row.get(j);
+        return matrix.get(i).get(j);
     }
 
     @Override
@@ -342,6 +350,7 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
         nullCheck(node);
 
         Set<GraphNode<L>> nodes = new HashSet<>();
+        
         for (GraphEdge<L> edge : getEdgesOf(node)) {
             GraphNode<L> node1 = edge.getNode1();
             // Non è specificato se node corrisponde a node1 o node2, quindi va controllato
@@ -447,8 +456,7 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
     }
 
     /**
-     * Metodo di utilità che lancia una {@link NullPointerException}
-     * se l'oggetto passato è <code>null</code>
+     * Metodo di utilità che lancia una {@link NullPointerException} se l'oggetto passato è <code>null</code>
      *
      * @param o l'oggetto da controllare
      *

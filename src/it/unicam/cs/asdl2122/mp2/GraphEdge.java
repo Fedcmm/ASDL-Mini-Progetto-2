@@ -26,6 +26,7 @@ package it.unicam.cs.asdl2122.mp2;
  * 
  * @param <L> tipo delle etichette dei nodi del grafo
  */
+@SuppressWarnings({"BooleanMethodIsAlwaysInverted", "unused"})
 public class GraphEdge<L> {
 
     private final GraphNode<L> node1;
@@ -119,7 +120,7 @@ public class GraphEdge<L> {
 
     /**
      * Restituisce il peso assegnato all'arco. Nel caso in cui il peso è uguale
-     * a Double.Nan l'arco è da considerarsi attualmente non pesato.
+     * a Double.NaN l'arco è da considerarsi attualmente non pesato.
      * 
      * @return il peso associato all'arco
      */

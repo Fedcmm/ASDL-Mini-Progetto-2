@@ -75,7 +75,7 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     @Override
     public boolean isPresent(E e) {
         if (e == null)
-            throw new NullPointerException();
+            throw new NullPointerException("Impossibile cercare null");
 
         return currentElements.containsKey(e);
     }
@@ -87,10 +87,12 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     @Override
     public void makeSet(E e) {
         if (e == null)
-            throw new NullPointerException();
+            throw new NullPointerException("Impossibile creare un insieme con null");
 
-        if (currentElements.putIfAbsent(e, new Node<>(e)) != null)
-            throw new IllegalArgumentException();
+        if (currentElements.get(e) != null)
+            throw new IllegalArgumentException("L'elemento passato è già presente in un insieme");
+
+        currentElements.put(e, new Node<>(e));
     }
 
     /*
@@ -101,15 +103,17 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     @Override
     public E findSet(E e) {
         if (e == null)
-            throw new NullPointerException();
+            throw new NullPointerException("Impossibile trovare il rappresentante di null");
 
         Node<E> node = currentElements.get(e);
         if (node == null)
             return null;
 
+        // Se l'elemento passato non è già il rappresentante prosegue ricorsivamente verso l'alto
         if (!e.equals(node.parent.item)) {
             node.parent = currentElements.get(findSet(node.parent.item));
         }
+        // Alla fine della ricorsione ogni nodo ha come padre il rappresentante
         return node.parent.item;
     }
 
@@ -126,12 +130,12 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     @Override
     public void union(E e1, E e2) {
         if (e1 == null || e2 == null)
-            throw new NullPointerException();
+            throw new NullPointerException("Impossibile unire degli elementi nulli");
 
         E e1Rep = findSet(e1);
         E e2Rep = findSet(e2);
         if (e1Rep == null || e2Rep == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Almeno uno degli elementi non esiste in nessun insieme");
 
         link(e1Rep, e2Rep);
     }
@@ -139,27 +143,33 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     @Override
     public Set<E> getCurrentRepresentatives() {
         Set<E> representatives = new HashSet<>();
+
         for (Node<E> node : currentElements.values()) {
+            // I rappresentanti hanno nel campo "parent" un puntatore a loro stessi, quindi "==" è efficace
             if (node.parent == node)
                 representatives.add(node.item);
         }
+
         return representatives;
     }
 
     @Override
     public Set<E> getCurrentElementsOfSetContaining(E e) {
         if (e == null)
-            throw new NullPointerException();
+            throw new NullPointerException("Nessun insieme può contenere null");
 
-        E eRep = findSet(e);
-        if (eRep == null)
-            throw new IllegalArgumentException();
+        E rep = findSet(e);
+        if (rep == null)
+            throw new IllegalArgumentException("L'elemento non esiste in nessun insieme");
 
         Set<E> elements = new HashSet<>();
+
         for (Node<E> node : currentElements.values()) {
-            if (eRep.equals(findSet(node.item)))
+            // Aggiunge solo gli elementi che hanno lo stesso rappresentante di e
+            if (rep.equals(findSet(node.item)))
                 elements.add(node.item);
         }
+
         return elements;
     }
 
@@ -168,6 +178,14 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
         currentElements.clear();
     }
 
+    /**
+     * Metodo di utilità per unire gli insiemi rappresentati dagli elementi passati.
+     * Il rappresentante dell'insieme finale è quello dell'insieme di rango più alto, o quello
+     * del secondo in caso di uguaglianza
+     *
+     * @param rep1 il rappresentante del primo insieme
+     * @param rep2 il rappresentante del secondo insieme
+     */
     private void link(E rep1, E rep2) {
         Node<E> node1 = currentElements.get(rep1);
         Node<E> node2 = currentElements.get(rep2);
@@ -176,6 +194,9 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
             node2.parent = node1;
         } else {
             node1.parent = node2;
+
+            // Se il rango dei due rappresentanti è uguale va incrementato, perché l'altezza
+            // dell'albero è aumentata e il limite superiore potrebbe non essere più corretto
             if (node1.rank == node2.rank)
                 node2.rank++;
         }

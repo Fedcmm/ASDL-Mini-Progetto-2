@@ -66,13 +66,14 @@ public class PrimMSP<L> {
         for (GraphEdge<L> edge : g.getEdges()) {
             if (!edge.hasWeight() || edge.getWeight() < 0)
                 throw new IllegalArgumentException(
-                        "Impossibile eseguire l'algoritmo su un grafo con pesi negativi o non esistenti");
+                        "Impossibile eseguire l'algoritmo su un grafo con pesi negativi o assenti");
         }
 
         GraphNode<L> root = g.getNode(s);
         if (root == null)
             throw new IllegalArgumentException("Il nodo specificato non esiste nel grafo");
 
+        // Inizializza i nodi mettendo la distanza ad infinito e togliendo il predecessore
         for (GraphNode<L> node : g.getNodes()) {
             node.setFloatingPointDistance(Double.POSITIVE_INFINITY);
             node.setPrevious(null);
@@ -81,27 +82,35 @@ public class PrimMSP<L> {
 
         queue.addAll(g.getNodes());
         while (!queue.isEmpty()) {
-            GraphNode<L> node = extractMinNode();
-            node.setColor(GraphNode.COLOR_BLACK);
+            GraphNode<L> minNode = extractMinNode();
 
-            for (GraphNode<L> graphNode : g.getAdjacentNodesOf(node)) {
-                GraphEdge<L> edge = g.getEdge(node, graphNode);
+            for (GraphNode<L> node : g.getAdjacentNodesOf(minNode)) {
+                GraphEdge<L> edge = g.getEdge(minNode, node);
 
-                if (queue.contains(graphNode) &&
-                        edge.getWeight() < graphNode.getFloatingPointDistance()) {
-                    graphNode.setPrevious(node);
-                    graphNode.setFloatingPointDistance(edge.getWeight());
+                // Se l'arco ha peso minore della distanza associata al nodo, allora
+                // il predecessore e la distanza vanno aggiornati
+                if (queue.contains(node) &&
+                        edge.getWeight() < node.getFloatingPointDistance()) {
+                    node.setPrevious(minNode);
+                    node.setFloatingPointDistance(edge.getWeight());
                 }
             }
+            minNode.setColor(GraphNode.COLOR_BLACK);
         }
     }
 
+    /**
+     * Rimuove da <code>queue</code> il nodo con la distanza minore e lo restituisce
+     *
+     * @return il nodo con distanza minore presente in <code>queue</code>
+     */
     private GraphNode<L> extractMinNode() {
         GraphNode<L> min = queue.get(0);
         int minIndex = 0;
 
         for (int i = 1; i < queue.size(); i++) {
             GraphNode<L> node = queue.get(i);
+
             if (node.getFloatingPointDistance() < min.getFloatingPointDistance()) {
                 min = node;
                 minIndex = i;

@@ -66,6 +66,7 @@ public class KruskalMSP<L> {
         Set<GraphEdge<L>> result = new HashSet<>();
 
         disjointSets.clear();
+        // Crea un nuovo insieme singoletto per ogni nodo
         for (GraphNode<L> node : g.getNodes()) {
             disjointSets.makeSet(node);
         }
@@ -73,9 +74,12 @@ public class KruskalMSP<L> {
         List<GraphEdge<L>> edgeList = new ArrayList<>(edges);
         sortEdges(edgeList, 0, edgeList.size() - 1);
 
+        // Itera sulla lista ordinata di archi
         for (GraphEdge<L> edge : edgeList) {
             GraphNode<L> node1 = edge.getNode1();
             GraphNode<L> node2 = edge.getNode2();
+
+            // Se i due nodi sono in insiemi diversi allora non sono ancora stati raggiunti da nessun percorso
             if (!disjointSets.findSet(node1).equals(disjointSets.findSet(node2))) {
                 result.add(edge);
                 disjointSets.union(node1, node2);
@@ -85,6 +89,13 @@ public class KruskalMSP<L> {
         return result;
     }
 
+    /**
+     * Ordina una lista di archi usando l'algoritmo di QuickSort
+     *
+     * @param edges la lista da ordinare
+     * @param low il limite inferiore della parte di lista da ordinare
+     * @param high il limite superiore della parte di lista da ordinare
+     */
     private void sortEdges(List<GraphEdge<L>> edges, int low, int high) {
         if (low < high) {
             int partIndex = partition(edges, low, high);
@@ -94,12 +105,21 @@ public class KruskalMSP<L> {
         }
     }
 
+    /**
+     * Applica la procedura Partition ad una lista di archi ordinandoli in base al loro peso
+     *
+     * @param edges la lista da ordinare
+     * @param low il limite inferiore della parte di lista da ordinare
+     * @param high il limite superiore della parte di lista da ordinare
+     * @return l'indice dell'elemento che si trova nella posizione corretta
+     */
     private int partition(List<GraphEdge<L>> edges, int low, int high) {
         GraphEdge<L> pivot = edges.get(high);
         int i = low - 1;
 
         for (int j = low; j < high; j++) {
             GraphEdge<L> jEdge = edges.get(j);
+
             if (jEdge.getWeight() <= pivot.getWeight()) {
                 i++;
 

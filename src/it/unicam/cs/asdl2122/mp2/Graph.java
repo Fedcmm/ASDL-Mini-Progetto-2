@@ -20,7 +20,7 @@ import java.util.Set;
  * @param <L> tipo delle etichette dei nodi del grafo
  *
  */
-@SuppressWarnings("DuplicatedCode")
+@SuppressWarnings({"DuplicatedCode", "unused"})
 public abstract class Graph<L> {
 
     /**
@@ -464,6 +464,8 @@ public abstract class Graph<L> {
      *         nodi dell'arco dato in qualsiasi ordine
      *
      * @throws NullPointerException l'arco passato è null
+     * @throws IllegalArgumentException se almeno uno dei due nodi dell'arco passato
+     * non esiste nel grafo
      */
     public abstract GraphEdge<L> getEdge(GraphEdge<L> edge);
 
@@ -812,7 +814,7 @@ public abstract class Graph<L> {
      * supportata dall'implementazione di questo grafo
      */
     public int getDegreeOf(int i) {
-        GraphNode<L> n = null;
+        GraphNode<L> n;
         try {
             n = this.getNode(i);
         } catch (IndexOutOfBoundsException e) {
